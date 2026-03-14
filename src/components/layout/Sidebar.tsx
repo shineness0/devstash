@@ -20,6 +20,7 @@ import {
   Folder,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { Badge } from '@/components/ui/badge';
 import type { SidebarData } from '@/lib/db/sidebar';
 
 const TYPE_ICON_MAP: Record<string, React.ComponentType<{ className?: string; style?: React.CSSProperties }>> = {
@@ -123,6 +124,11 @@ function SidebarContent({ isCollapsed, onToggleCollapse, data }: SidebarContentP
                   {!isCollapsed && (
                     <>
                       <span className="flex-1 capitalize">{type.name}s</span>
+                      {(type.name === 'file' || type.name === 'image') && (
+                        <Badge variant="outline" className="h-4 px-1 text-[9px] font-semibold text-muted-foreground border-muted-foreground/30">
+                          PRO
+                        </Badge>
+                      )}
                       {count > 0 && <span className="text-xs tabular-nums">{count}</span>}
                     </>
                   )}
