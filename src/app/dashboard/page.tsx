@@ -1,18 +1,8 @@
-import { mockItems, mockCollections, mockItemTypes } from '@/lib/mock-data';
+import { getRecentCollections, getDashboardStats } from '@/lib/db/collections';
+import { mockItems, mockItemTypes } from '@/lib/mock-data';
 import { StatsCards } from '@/components/dashboard/StatsCards';
 import { ItemCard } from '@/components/dashboard/ItemCard';
 import { CollectionCard } from '@/components/dashboard/CollectionCard';
-
-const stats = {
-  totalItems: mockItems.length,
-  totalCollections: mockCollections.length,
-  favoriteItems: mockItems.filter((i) => i.isFavorite).length,
-  favoriteCollections: mockCollections.filter((c) => c.isFavorite).length,
-};
-
-const recentCollections = [...mockCollections]
-  .sort((a, b) => b.updatedAt.getTime() - a.updatedAt.getTime())
-  .slice(0, 4);
 
 const pinnedItems = mockItems.filter((i) => i.isPinned);
 
@@ -20,7 +10,12 @@ const recentItems = [...mockItems]
   .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime())
   .slice(0, 10);
 
-export default function DashboardPage() {
+export default async function DashboardPage() {
+  const [recentCollections, stats] = await Promise.all([
+    getRecentCollections(4),
+    getDashboardStats(),
+  ]);
+
   return (
     <div className="p-6 space-y-8">
       <StatsCards stats={stats} />
@@ -32,12 +27,7 @@ export default function DashboardPage() {
         </h2>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
           {recentCollections.map((col) => (
-            <CollectionCard
-              key={col.id}
-              collection={col}
-              itemTypes={mockItemTypes}
-              items={mockItems}
-            />
+            <CollectionCard key={col.id} collection={col} />
           ))}
         </div>
       </section>

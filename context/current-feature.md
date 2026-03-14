@@ -1,14 +1,37 @@
 ## Current Feature
 
+Dashboard Collections — Real Data
+
 ## Status
+
+Completed
 
 ## Goals
 
+- Replace mock collection data in the dashboard main area with real data from Neon DB via Prisma
+- Create `src/lib/db/collections.ts` with data fetching functions
+- Fetch collections directly in server component
+- Collection card border color derived from most-used content type in that collection
+- Show small icons of all types in that collection
+- Keep current design intact
+- Update collection stats display
+
 ## Note
+
+Do not add items underneath collection cards yet — that comes later.
 
 ## History
 
 <!-- Keep this updated. Earliest to latest -->
+
+### 2026-03-14 — Dashboard Collections — Real Data
+
+- Created `src/lib/db/collections.ts` with `getRecentCollections()` and `getDashboardStats()` Prisma queries
+- Updated `CollectionCard` to accept real Prisma data (removed mock-data dependency)
+- Collection card top border color derived from most-used item type in the collection
+- Small type icons (up to 5) displayed per card showing all content types present
+- Updated dashboard page to fetch collections and stats from Neon DB in parallel
+- Items sections (pinned/recent) still use mock data — to be replaced in a future feature
 
 ### 2026-03-13 — Initial Next.js Setup
 
