@@ -2,23 +2,9 @@
 
 ## Status
 
-In Progress
-
 ## Goals
 
-Prisma + Neon PostgreSQL Setup
-
-- Install Prisma 7 and configure with Neon PostgreSQL (serverless)
-- Create initial schema based on data models in `@context/project-overview.md` (User, Item, ItemType, Collection, ItemCollection, Tag)
-- Include NextAuth models (Account, Session, VerificationToken)
-- Add appropriate indexes and cascade deletes
-- Always use migrations (`prisma migrate dev`) — never `db push`
-
 ## Note
-
-- Use Prisma 7 (has breaking changes — read upgrade guide before implementing)
-- `DATABASE_URL` points to the dev branch on Neon; production branch is separate
-- Review Prisma 7 upgrade guide and quickstart before writing any code
 
 ## History
 
@@ -60,3 +46,28 @@ Prisma + Neon PostgreSQL Setup
 - Added `ItemCard` component with type icon, content preview (monospace for snippets/commands), language + tag badges, pin/favorite indicators
 - Dashboard page sections: stats → recent collections → pinned items → 10 recent items (sorted by `createdAt` desc)
 - Removed double padding from `DashboardShell` main element (each page now controls its own padding)
+
+### 2026-03-14 — Seed Sample Data
+
+- Installed `bcryptjs` for password hashing
+- Expanded `prisma/seed.ts` with demo user (`demo@devstash.io` / `12345678`, bcrypt 12 rounds)
+- Added 5 collections with 18 items total (fully linked, tagged, idempotent):
+  - **React Patterns** — 3 TypeScript snippets (custom hooks, component patterns, utilities)
+  - **AI Workflows** — 3 prompts (code review, docs generation, refactoring)
+  - **DevOps** — 1 Docker/CI snippet, 1 deploy command, 2 real doc links
+  - **Terminal Commands** — 4 commands (git, docker, process management, npm)
+  - **Design Resources** — 4 real links (Tailwind, shadcn, Radix, Lucide)
+- Updated `scripts/test-db.ts` to verify demo user, collections, items, and tags
+
+### 2026-03-13 — Prisma 7 + Neon PostgreSQL Setup
+
+- Installed Prisma 7 with `@prisma/adapter-pg`, `pg`, and `tsx` dev tooling
+- Created `prisma/schema.prisma` with full schema (User, Item, ItemType, Collection, ItemCollection, Tag + NextAuth models)
+- Configured `prisma.config.ts` with `dotenv` for `DATABASE_URL`, migration path, and seed command
+- Created `src/lib/prisma.ts` singleton using `PrismaPg` driver adapter (Prisma 7 requirement)
+- Ran initial migration (`20260313194414_init`) against Neon dev branch
+- Seeded 7 system item types (snippet, prompt, command, note, file, image, link)
+- Added `scripts/test-db.ts` for verifying DB connection and seeded data
+- Added `db:generate`, `db:migrate`, `db:seed`, `db:studio`, `db:test` npm scripts
+- Added `.env.example` with required environment variable templates
+- Excluded `prisma/` from Next.js TypeScript compilation
