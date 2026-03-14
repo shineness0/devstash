@@ -1,26 +1,33 @@
 ## Current Feature
 
-Dashboard Items — Real Data
+Stats & Sidebar — Real Data
 
 ## Status
 
 
 ## Goals
 
-- Replace mock item data (pinned and recent) in the dashboard with real data from Neon DB via Prisma
-- Create `src/lib/db/items.ts` with data fetching functions
-- Fetch items directly in server component
-- Item card icon/border derived from item type
-- Display item type tags and all current card details
-- If no pinned items, show nothing in that section
-
-## Note
-
-Keep the current design intact. Reference the existing ItemCard component and screenshot if needed.
 
 ## History
 
 <!-- Keep this updated. Earliest to latest -->
+
+### 2026-03-14 — Stats & Sidebar — Real Data
+
+- Created `src/lib/db/sidebar.ts` with `getSidebarData()` fetching item types (with counts), favorite/recent collections, and quick-access counts in parallel
+- Sidebar item types now come from DB with real item counts, linking to `/items/[typename]`
+- Favorite collections show star icon; recent collections show a colored circle based on dominant item type
+- Added "View all collections" link at the bottom of the recent collections list → `/collections`
+- Updated `DashboardShell` to accept `sidebarData` prop; layout fetches it as a server component
+- Removed all mock-data usage from `Sidebar`
+
+### 2026-03-14 — Dashboard Items — Real Data
+
+- Created `src/lib/db/items.ts` with `getPinnedItems()` and `getRecentItems()` Prisma queries
+- Replaced mock item data (pinned and recent) in dashboard with real Neon DB data
+- Item card icon/border derived from item type
+- Displays item type tags and all current card details
+- Pinned section hidden when no pinned items exist
 
 ### 2026-03-14 — Dashboard Collections — Real Data
 

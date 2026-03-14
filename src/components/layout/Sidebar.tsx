@@ -20,7 +20,7 @@ import {
   Folder,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { mockItemTypes, mockCollections, mockItems, mockUser } from '@/lib/mock-data';
+import type { SidebarData } from '@/lib/db/sidebar';
 
 const TYPE_ICON_MAP: Record<string, React.ComponentType<{ className?: string; style?: React.CSSProperties }>> = {
   snippet: Code,
@@ -32,36 +32,15 @@ const TYPE_ICON_MAP: Record<string, React.ComponentType<{ className?: string; st
   link: LinkIcon,
 };
 
-const itemCountByType = mockItems.reduce(
-  (acc, item) => {
-    acc[item.itemTypeId] = (acc[item.itemTypeId] || 0) + 1;
-    return acc;
-  },
-  {} as Record<string, number>
-);
-
-const favoriteCollections = mockCollections.filter((c) => c.isFavorite);
-const recentCollections = [...mockCollections]
-  .sort((a, b) => b.updatedAt.getTime() - a.updatedAt.getTime())
-  .slice(0, 3);
-
-const totalItems = mockItems.length;
-const favoriteItemCount = mockItems.filter((i) => i.isFavorite).length;
-const pinnedItemCount = mockItems.filter((i) => i.isPinned).length;
-
-const userInitials = mockUser.name
-  .split(' ')
-  .map((n) => n[0])
-  .join('')
-  .toUpperCase();
-
 interface SidebarContentProps {
   isCollapsed: boolean;
   onToggleCollapse: () => void;
+  data: SidebarData;
 }
 
-function SidebarContent({ isCollapsed, onToggleCollapse }: SidebarContentProps) {
+function SidebarContent({ isCollapsed, onToggleCollapse, data }: SidebarContentProps) {
   const pathname = usePathname();
+  const { itemTypes, favoriteCollections, recentCollections, totalItems, favoriteItemCount, pinnedItemCount } = data;
 
   const navItem = (href: string) =>
     cn(
@@ -129,9 +108,9 @@ function SidebarContent({ isCollapsed, onToggleCollapse }: SidebarContentProps) 
             </p>
           )}
           <nav className="space-y-0.5">
-            {mockItemTypes.map((type) => {
+            {itemTypes.map((type) => {
               const Icon = TYPE_ICON_MAP[type.name];
-              const count = itemCountByType[type.id] || 0;
+              const count = type._count.items;
               const href = `/items/${type.name}s`;
               return (
                 <Link
@@ -166,7 +145,7 @@ function SidebarContent({ isCollapsed, onToggleCollapse }: SidebarContentProps) 
                   href={`/collections/${col.id}`}
                   className={navItem(`/collections/${col.id}`)}
                 >
-                  <Folder className="h-4 w-4 shrink-0 text-yellow-500" />
+                  <Star className="h-4 w-4 shrink-0 text-yellow-500" />
                   <span className="flex-1 truncate">{col.name}</span>
                 </Link>
               ))}
@@ -187,10 +166,19 @@ function SidebarContent({ isCollapsed, onToggleCollapse }: SidebarContentProps) 
                   href={`/collections/${col.id}`}
                   className={navItem(`/collections/${col.id}`)}
                 >
-                  <Folder className="h-4 w-4 shrink-0 text-muted-foreground" />
+                  <span
+                    className="h-3 w-3 rounded-full shrink-0"
+                    style={{ backgroundColor: col.dominantColor }}
+                  />
                   <span className="flex-1 truncate">{col.name}</span>
                 </Link>
               ))}
+              <Link
+                href="/collections"
+                className="flex items-center gap-3 rounded-md px-2 py-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors"
+              >
+                View all collections
+              </Link>
             </nav>
           </section>
         )}
@@ -204,19 +192,17 @@ function SidebarContent({ isCollapsed, onToggleCollapse }: SidebarContentProps) 
         )}
       >
         <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground text-xs font-semibold">
-          {userInitials}
+          DD
         </div>
         {!isCollapsed && (
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-1.5">
-              <p className="text-sm font-medium leading-none truncate">{mockUser.name}</p>
-              {mockUser.isPro && (
-                <span className="inline-flex items-center rounded px-1 py-0.5 text-[10px] font-semibold bg-violet-500/20 text-violet-400">
-                  Pro
-                </span>
-              )}
+              <p className="text-sm font-medium leading-none truncate">Demo Dev</p>
+              <span className="inline-flex items-center rounded px-1 py-0.5 text-[10px] font-semibold bg-violet-500/20 text-violet-400">
+                Pro
+              </span>
             </div>
-            <p className="text-xs text-muted-foreground mt-0.5 truncate">{mockUser.email}</p>
+            <p className="text-xs text-muted-foreground mt-0.5 truncate">demo@devstash.io</p>
           </div>
         )}
       </div>
@@ -229,9 +215,10 @@ interface SidebarProps {
   onToggleCollapse: () => void;
   isMobileOpen: boolean;
   onMobileClose: () => void;
+  data: SidebarData;
 }
 
-export function Sidebar({ isCollapsed, onToggleCollapse, isMobileOpen, onMobileClose }: SidebarProps) {
+export function Sidebar({ isCollapsed, onToggleCollapse, isMobileOpen, onMobileClose, data }: SidebarProps) {
   return (
     <>
       {/* Desktop sidebar */}
@@ -242,7 +229,7 @@ export function Sidebar({ isCollapsed, onToggleCollapse, isMobileOpen, onMobileC
           isCollapsed ? 'w-14' : 'w-60'
         )}
       >
-        <SidebarContent isCollapsed={isCollapsed} onToggleCollapse={onToggleCollapse} />
+        <SidebarContent isCollapsed={isCollapsed} onToggleCollapse={onToggleCollapse} data={data} />
       </aside>
 
       {/* Mobile backdrop */}
@@ -269,7 +256,7 @@ export function Sidebar({ isCollapsed, onToggleCollapse, isMobileOpen, onMobileC
         >
           <X className="h-4 w-4" />
         </button>
-        <SidebarContent isCollapsed={false} onToggleCollapse={() => {}} />
+        <SidebarContent isCollapsed={false} onToggleCollapse={() => {}} data={data} />
       </aside>
     </>
   );
