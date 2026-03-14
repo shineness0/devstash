@@ -1,5 +1,6 @@
 import { Code, Sparkles, Terminal, StickyNote, File, Image, Link as LinkIcon, Star, Pin } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import type { ItemWithType } from '@/lib/db/items';
 
 const TYPE_ICON_MAP: Record<string, React.ComponentType<{ className?: string; style?: React.CSSProperties }>> = {
   snippet: Code,
@@ -11,30 +12,10 @@ const TYPE_ICON_MAP: Record<string, React.ComponentType<{ className?: string; st
   link: LinkIcon,
 };
 
-interface Item {
-  id: string;
-  title: string;
-  contentType: 'TEXT' | 'FILE' | 'URL';
-  content: string | null;
-  url?: string | null;
-  description: string | null;
-  language: string | null;
-  isFavorite: boolean;
-  isPinned: boolean;
-  tags: string[];
-  itemTypeId: string;
-}
-
-interface ItemType {
-  id: string;
-  name: string;
-  color: string;
-}
-
-export function ItemCard({ item, itemTypes }: { item: Item; itemTypes: ItemType[] }) {
-  const type = itemTypes.find((t) => t.id === item.itemTypeId);
-  const Icon = type ? TYPE_ICON_MAP[type.name] : null;
-  const isCode = type?.name === 'snippet' || type?.name === 'command';
+export function ItemCard({ item }: { item: ItemWithType }) {
+  const { itemType } = item;
+  const Icon = TYPE_ICON_MAP[itemType.name] ?? null;
+  const isCode = itemType.name === 'snippet' || itemType.name === 'command';
 
   const preview = item.content
     ? item.content.slice(0, 150).trim()
@@ -83,15 +64,15 @@ export function ItemCard({ item, itemTypes }: { item: Item; itemTypes: ItemType[
           )}
           {item.tags.slice(0, 2).map((tag) => (
             <span
-              key={tag}
+              key={tag.id}
               className="inline-flex items-center rounded px-1.5 py-0.5 text-[10px] font-medium bg-muted text-muted-foreground"
             >
-              {tag}
+              {tag.name}
             </span>
           ))}
         </div>
-        {Icon && type && (
-          <Icon className="h-4 w-4 shrink-0" style={{ color: type.color }} />
+        {Icon && (
+          <Icon className="h-4 w-4 shrink-0" style={{ color: itemType.color }} />
         )}
       </div>
     </div>
