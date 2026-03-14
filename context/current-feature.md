@@ -1,23 +1,8 @@
 ## Current Feature
 
-Add Pro Badge to Sidebar
-
 ## Status
 
-In Progress
-
 ## Goals
-
-- Add a PRO badge next to the "file" and "image" item types in the sidebar Types section
-- Use ShadCN UI Badge component
-- Badge should be clean and subtle
-- Badge text is "PRO" (all uppercase)
-
-## Notes
-
-- Only the `file` and `image` types get the badge (they are Pro-only per the project spec)
-- Badge should work in both expanded and collapsed sidebar states (or be hidden when collapsed)
-
 
 ## History
 
@@ -110,3 +95,10 @@ In Progress
 - Added `db:generate`, `db:migrate`, `db:seed`, `db:studio`, `db:test` npm scripts
 - Added `.env.example` with required environment variable templates
 - Excluded `prisma/` from Next.js TypeScript compilation
+
+### 2026-03-14 — Add Pro Badge to Sidebar
+
+- Installed ShadCN UI `Badge` component
+- Added subtle `PRO` badge (outline variant, muted styling) next to `file` and `image` types in the sidebar Types section
+- Badge is hidden when sidebar is collapsed
+- `geistMono` removed from `<body>` class in `layout.tsx` (pre-existing cleanup)
