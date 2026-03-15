@@ -1,19 +1,8 @@
 ## Current Feature
 
-Code Audit Quick Wins
-
 ## Status
 
-In Progress
-
 ## Goals
-
-Address low-risk findings from the code audit that can be resolved without authentication being in place:
-
-1. **Guard `DATABASE_URL` in `src/lib/prisma.ts`** — replace `!` non-null assertion with an explicit runtime check that throws a clear error if the variable is missing
-2. **Fix redundant CSS in `globals.css`** — `body` sets `background-color`/`color` as raw CSS and via `@apply` — remove the redundant raw declarations
-3. **Extract `TYPE_ICON_MAP` to `src/lib/constants/item-types.ts`** — the same icon map is duplicated in `ItemCard.tsx`, `CollectionCard.tsx`, and `Sidebar.tsx`; consolidate into one shared constant
-4. **Add `@@index([userId, updatedAt])` to `Collection` model** — `ORDER BY updatedAt DESC` queries currently degrade to full scans; use a Prisma migration to add the compound index
 
 ## History
 
@@ -113,3 +102,10 @@ Address low-risk findings from the code audit that can be resolved without authe
 - Added subtle `PRO` badge (outline variant, muted styling) next to `file` and `image` types in the sidebar Types section
 - Badge is hidden when sidebar is collapsed
 - `geistMono` removed from `<body>` class in `layout.tsx` (pre-existing cleanup)
+
+### 2026-03-15 — Code Audit Quick Wins
+
+- Added explicit `DATABASE_URL` guard in `src/lib/prisma.ts` — throws a clear error on startup if env var is missing (replaces `!` non-null assertion)
+- Extracted `TYPE_ICON_MAP` to `src/lib/constants/item-types.ts` — consolidated duplicate icon maps from `ItemCard.tsx`, `CollectionCard.tsx`, and `Sidebar.tsx` into a single shared constant
+- Removed redundant raw `background-color`/`color` declarations from `body` in `globals.css` (`@apply` handles both)
+- Added `@@index([userId, updatedAt])` to `Collection` model via migration `20260315080019_add_collection_user_id_updated_at_index` — covers `ORDER BY updatedAt DESC` queries filtered by user
