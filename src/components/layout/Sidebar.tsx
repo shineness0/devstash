@@ -3,13 +3,6 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import {
-  Code,
-  Sparkles,
-  Terminal,
-  StickyNote,
-  File,
-  Image,
-  Link as LinkIcon,
   Star,
   Clock,
   Pin,
@@ -21,17 +14,8 @@ import {
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Badge } from '@/components/ui/badge';
+import { TYPE_ICON_MAP } from '@/lib/constants/item-types';
 import type { SidebarData } from '@/lib/db/sidebar';
-
-const TYPE_ICON_MAP: Record<string, React.ComponentType<{ className?: string; style?: React.CSSProperties }>> = {
-  snippet: Code,
-  prompt: Sparkles,
-  command: Terminal,
-  note: StickyNote,
-  file: File,
-  image: Image,
-  link: LinkIcon,
-};
 
 interface SidebarContentProps {
   isCollapsed: boolean;

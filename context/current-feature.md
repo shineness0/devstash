@@ -1,8 +1,19 @@
 ## Current Feature
 
+Code Audit Quick Wins
+
 ## Status
 
+In Progress
+
 ## Goals
+
+Address low-risk findings from the code audit that can be resolved without authentication being in place:
+
+1. **Guard `DATABASE_URL` in `src/lib/prisma.ts`** — replace `!` non-null assertion with an explicit runtime check that throws a clear error if the variable is missing
+2. **Fix redundant CSS in `globals.css`** — `body` sets `background-color`/`color` as raw CSS and via `@apply` — remove the redundant raw declarations
+3. **Extract `TYPE_ICON_MAP` to `src/lib/constants/item-types.ts`** — the same icon map is duplicated in `ItemCard.tsx`, `CollectionCard.tsx`, and `Sidebar.tsx`; consolidate into one shared constant
+4. **Add `@@index([userId, updatedAt])` to `Collection` model** — `ORDER BY updatedAt DESC` queries currently degrade to full scans; use a Prisma migration to add the compound index
 
 ## History
 
