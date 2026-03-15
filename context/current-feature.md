@@ -8,31 +8,18 @@
 
 <!-- Keep this updated. Earliest to latest -->
 
-### 2026-03-14 — Stats & Sidebar — Real Data
+### 2026-03-13 — Prisma 7 + Neon PostgreSQL Setup
 
-- Created `src/lib/db/sidebar.ts` with `getSidebarData()` fetching item types (with counts), favorite/recent collections, and quick-access counts in parallel
-- Sidebar item types now come from DB with real item counts, linking to `/items/[typename]`
-- Favorite collections show star icon; recent collections show a colored circle based on dominant item type
-- Added "View all collections" link at the bottom of the recent collections list → `/collections`
-- Updated `DashboardShell` to accept `sidebarData` prop; layout fetches it as a server component
-- Removed all mock-data usage from `Sidebar`
-
-### 2026-03-14 — Dashboard Items — Real Data
-
-- Created `src/lib/db/items.ts` with `getPinnedItems()` and `getRecentItems()` Prisma queries
-- Replaced mock item data (pinned and recent) in dashboard with real Neon DB data
-- Item card icon/border derived from item type
-- Displays item type tags and all current card details
-- Pinned section hidden when no pinned items exist
-
-### 2026-03-14 — Dashboard Collections — Real Data
-
-- Created `src/lib/db/collections.ts` with `getRecentCollections()` and `getDashboardStats()` Prisma queries
-- Updated `CollectionCard` to accept real Prisma data (removed mock-data dependency)
-- Collection card top border color derived from most-used item type in the collection
-- Small type icons (up to 5) displayed per card showing all content types present
-- Updated dashboard page to fetch collections and stats from Neon DB in parallel
-- Items sections (pinned/recent) still use mock data — to be replaced in a future feature
+- Installed Prisma 7 with `@prisma/adapter-pg`, `pg`, and `tsx` dev tooling
+- Created `prisma/schema.prisma` with full schema (User, Item, ItemType, Collection, ItemCollection, Tag + NextAuth models)
+- Configured `prisma.config.ts` with `dotenv` for `DATABASE_URL`, migration path, and seed command
+- Created `src/lib/prisma.ts` singleton using `PrismaPg` driver adapter (Prisma 7 requirement)
+- Ran initial migration (`20260313194414_init`) against Neon dev branch
+- Seeded 7 system item types (snippet, prompt, command, note, file, image, link)
+- Added `scripts/test-db.ts` for verifying DB connection and seeded data
+- Added `db:generate`, `db:migrate`, `db:seed`, `db:studio`, `db:test` npm scripts
+- Added `.env.example` with required environment variable templates
+- Excluded `prisma/` from Next.js TypeScript compilation
 
 ### 2026-03-13 — Initial Next.js Setup
 
@@ -83,18 +70,31 @@
   - **Design Resources** — 4 real links (Tailwind, shadcn, Radix, Lucide)
 - Updated `scripts/test-db.ts` to verify demo user, collections, items, and tags
 
-### 2026-03-13 — Prisma 7 + Neon PostgreSQL Setup
+### 2026-03-14 — Dashboard Collections — Real Data
 
-- Installed Prisma 7 with `@prisma/adapter-pg`, `pg`, and `tsx` dev tooling
-- Created `prisma/schema.prisma` with full schema (User, Item, ItemType, Collection, ItemCollection, Tag + NextAuth models)
-- Configured `prisma.config.ts` with `dotenv` for `DATABASE_URL`, migration path, and seed command
-- Created `src/lib/prisma.ts` singleton using `PrismaPg` driver adapter (Prisma 7 requirement)
-- Ran initial migration (`20260313194414_init`) against Neon dev branch
-- Seeded 7 system item types (snippet, prompt, command, note, file, image, link)
-- Added `scripts/test-db.ts` for verifying DB connection and seeded data
-- Added `db:generate`, `db:migrate`, `db:seed`, `db:studio`, `db:test` npm scripts
-- Added `.env.example` with required environment variable templates
-- Excluded `prisma/` from Next.js TypeScript compilation
+- Created `src/lib/db/collections.ts` with `getRecentCollections()` and `getDashboardStats()` Prisma queries
+- Updated `CollectionCard` to accept real Prisma data (removed mock-data dependency)
+- Collection card top border color derived from most-used item type in the collection
+- Small type icons (up to 5) displayed per card showing all content types present
+- Updated dashboard page to fetch collections and stats from Neon DB in parallel
+- Items sections (pinned/recent) still use mock data — to be replaced in a future feature
+
+### 2026-03-14 — Dashboard Items — Real Data
+
+- Created `src/lib/db/items.ts` with `getPinnedItems()` and `getRecentItems()` Prisma queries
+- Replaced mock item data (pinned and recent) in dashboard with real Neon DB data
+- Item card icon/border derived from item type
+- Displays item type tags and all current card details
+- Pinned section hidden when no pinned items exist
+
+### 2026-03-14 — Stats & Sidebar — Real Data
+
+- Created `src/lib/db/sidebar.ts` with `getSidebarData()` fetching item types (with counts), favorite/recent collections, and quick-access counts in parallel
+- Sidebar item types now come from DB with real item counts, linking to `/items/[typename]`
+- Favorite collections show star icon; recent collections show a colored circle based on dominant item type
+- Added "View all collections" link at the bottom of the recent collections list → `/collections`
+- Updated `DashboardShell` to accept `sidebarData` prop; layout fetches it as a server component
+- Removed all mock-data usage from `Sidebar`
 
 ### 2026-03-14 — Add Pro Badge to Sidebar
 
