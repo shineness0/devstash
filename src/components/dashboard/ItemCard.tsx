@@ -1,16 +1,7 @@
-import { Code, Sparkles, Terminal, StickyNote, File, Image, Link as LinkIcon, Star, Pin } from 'lucide-react';
+import { Star, Pin } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { TYPE_ICON_MAP } from '@/lib/constants/item-types';
 import type { ItemWithType } from '@/lib/db/items';
-
-const TYPE_ICON_MAP: Record<string, React.ComponentType<{ className?: string; style?: React.CSSProperties }>> = {
-  snippet: Code,
-  prompt: Sparkles,
-  command: Terminal,
-  note: StickyNote,
-  file: File,
-  image: Image,
-  link: LinkIcon,
-};
 
 export function ItemCard({ item }: { item: ItemWithType }) {
   const { itemType } = item;

@@ -1,17 +1,7 @@
 import Link from 'next/link';
-import { Folder, Star, Code, Sparkles, Terminal, StickyNote, File, Image, Link as LinkIcon } from 'lucide-react';
-import type { LucideIcon } from 'lucide-react';
+import { Folder, Star } from 'lucide-react';
+import { TYPE_ICON_MAP } from '@/lib/constants/item-types';
 import type { CollectionWithTypes } from '@/lib/db/collections';
-
-const TYPE_ICONS: Record<string, LucideIcon> = {
-  snippet: Code,
-  prompt: Sparkles,
-  command: Terminal,
-  note: StickyNote,
-  file: File,
-  image: Image,
-  link: LinkIcon,
-};
 
 function getDominantTypeColor(collection: CollectionWithTypes): string {
   if (collection.items.length === 0) {
@@ -77,7 +67,7 @@ export function CollectionCard({ collection }: { collection: CollectionWithTypes
         {uniqueTypes.length > 0 && (
           <div className="flex items-center gap-1">
             {uniqueTypes.slice(0, 5).map((type) => {
-              const Icon = TYPE_ICONS[type.name];
+              const Icon = TYPE_ICON_MAP[type.name];
               if (!Icon) return null;
               return <Icon key={type.id} className="h-3 w-3" style={{ color: type.color }} />;
             })}
