@@ -5,6 +5,8 @@ import Link from 'next/link';
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Github } from 'lucide-react';
 import { signInWithCredentials, signInWithGitHub } from './actions';
 
@@ -31,56 +33,67 @@ export function SignInForm({ callbackUrl, verified, urlError }: SignInFormProps)
   }, [verified, urlError]);
 
   return (
-    <div className="w-full max-w-sm space-y-6">
-      <div className="space-y-1 text-center">
-        <h1 className="text-2xl font-semibold tracking-tight">Sign in to DevStash</h1>
-        <p className="text-sm text-muted-foreground">Welcome back</p>
-      </div>
+    <Card className="w-full max-w-sm">
+      <CardHeader className="text-center">
+        <CardTitle className="text-xl font-semibold">Sign in to DevStash</CardTitle>
+        <CardDescription>Welcome back</CardDescription>
+      </CardHeader>
 
-      <form action={formAction} className="space-y-3">
-        <div className="space-y-2">
-          <Input
-            type="email"
-            name="email"
-            placeholder="Email"
-            required
-            autoComplete="email"
-          />
-          <Input
-            type="password"
-            name="password"
-            placeholder="Password"
-            required
-            autoComplete="current-password"
-          />
+      <CardContent className="space-y-4">
+        <form action={formAction} className="space-y-4">
+          <div className="space-y-1.5">
+            <Label htmlFor="email">Email</Label>
+            <Input
+              id="email"
+              type="email"
+              name="email"
+              placeholder="you@example.com"
+              required
+              autoComplete="email"
+            />
+          </div>
+
+          <div className="space-y-1.5">
+            <Label htmlFor="password">Password</Label>
+            <Input
+              id="password"
+              type="password"
+              name="password"
+              placeholder="••••••••"
+              required
+              autoComplete="current-password"
+            />
+          </div>
+
+          {error && <p className="text-sm text-destructive">{error}</p>}
+
+          <Button type="submit" className="w-full" disabled={isPending}>
+            {isPending ? 'Signing in…' : 'Sign in'}
+          </Button>
+        </form>
+
+        <div className="flex items-center gap-3">
+          <div className="flex-1 border-t border-border" />
+          <span className="text-xs text-muted-foreground">or</span>
+          <div className="flex-1 border-t border-border" />
         </div>
 
-        {error && <p className="text-sm text-destructive">{error}</p>}
+        <form action={signInWithGitHub.bind(null, callbackUrl)}>
+          <Button variant="outline" className="w-full" type="submit">
+            <Github className="mr-2 h-4 w-4" />
+            Sign in with GitHub
+          </Button>
+        </form>
+      </CardContent>
 
-        <Button type="submit" className="w-full" disabled={isPending}>
-          {isPending ? 'Signing in…' : 'Sign in'}
-        </Button>
-      </form>
-
-      <div className="flex items-center gap-3">
-        <div className="flex-1 border-t border-border" />
-        <span className="text-xs text-muted-foreground">or</span>
-        <div className="flex-1 border-t border-border" />
-      </div>
-
-      <form action={signInWithGitHub.bind(null, callbackUrl)}>
-        <Button variant="outline" className="w-full" type="submit">
-          <Github className="mr-2 h-4 w-4" />
-          Sign in with GitHub
-        </Button>
-      </form>
-
-      <p className="text-center text-sm text-muted-foreground">
-        Don&apos;t have an account?{' '}
-        <Link href="/register" className="underline underline-offset-4 hover:text-foreground">
-          Register
-        </Link>
-      </p>
-    </div>
+      <CardFooter className="justify-center">
+        <p className="text-sm text-muted-foreground">
+          Don&apos;t have an account?{' '}
+          <Link href="/register" className="underline underline-offset-4 hover:text-foreground">
+            Register
+          </Link>
+        </p>
+      </CardFooter>
+    </Card>
   );
 }
