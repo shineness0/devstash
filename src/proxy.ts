@@ -10,7 +10,7 @@ export const proxy = auth(function proxy(req: NextRequest) {
   const session = (req as NextRequest & { auth: unknown }).auth;
 
   if (pathname.startsWith("/dashboard") && !session) {
-    const signInUrl = new URL("/api/auth/signin", req.url);
+    const signInUrl = new URL("/sign-in", req.url);
     signInUrl.searchParams.set("callbackUrl", req.url);
     return NextResponse.redirect(signInUrl);
   }

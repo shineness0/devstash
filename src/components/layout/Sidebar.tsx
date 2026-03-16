@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import {
   Star,
   Clock,
@@ -11,20 +11,35 @@ import {
   ChevronRight,
   X,
   Folder,
+  LogOut,
 } from 'lucide-react';
+import { signOut } from 'next-auth/react';
 import { cn } from '@/lib/utils';
 import { Badge } from '@/components/ui/badge';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 import { TYPE_ICON_MAP } from '@/lib/constants/item-types';
+import { UserAvatar } from '@/components/shared/UserAvatar';
 import type { SidebarData } from '@/lib/db/sidebar';
+import type { Session } from 'next-auth';
+
+type SessionUser = Session['user'];
 
 interface SidebarContentProps {
   isCollapsed: boolean;
   onToggleCollapse: () => void;
   data: SidebarData;
+  user: SessionUser | null;
 }
 
-function SidebarContent({ isCollapsed, onToggleCollapse, data }: SidebarContentProps) {
+function SidebarContent({ isCollapsed, onToggleCollapse, data, user }: SidebarContentProps) {
   const pathname = usePathname();
+  const router = useRouter();
   const { itemTypes, favoriteCollections, recentCollections, totalItems, favoriteItemCount, pinnedItemCount } = data;
 
   const navItem = (href: string) =>
@@ -175,26 +190,40 @@ function SidebarContent({ isCollapsed, onToggleCollapse, data }: SidebarContentP
       </div>
 
       {/* User avatar */}
-      <div
-        className={cn(
-          'border-t border-border p-3 shrink-0',
-          isCollapsed ? 'flex justify-center' : 'flex items-center gap-3'
-        )}
-      >
-        <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground text-xs font-semibold">
-          DD
-        </div>
-        {!isCollapsed && (
-          <div className="flex-1 min-w-0">
-            <div className="flex items-center gap-1.5">
-              <p className="text-sm font-medium leading-none truncate">Demo Dev</p>
-              <span className="inline-flex items-center rounded px-1 py-0.5 text-[10px] font-semibold bg-violet-500/20 text-violet-400">
-                Pro
-              </span>
-            </div>
-            <p className="text-xs text-muted-foreground mt-0.5 truncate">demo@devstash.io</p>
-          </div>
-        )}
+      <div className="border-t border-border p-3 shrink-0">
+        <DropdownMenu>
+          <DropdownMenuTrigger
+            className={cn(
+              'flex items-center gap-3 w-full rounded-md p-1 hover:bg-accent transition-colors text-left',
+              isCollapsed && 'justify-center'
+            )}
+          >
+            <UserAvatar name={user?.name} image={user?.image} />
+            {!isCollapsed && (
+              <div className="flex-1 min-w-0">
+                <p className="text-sm font-medium leading-none truncate">
+                  {user?.name ?? 'Unknown'}
+                </p>
+                <p className="text-xs text-muted-foreground mt-0.5 truncate">
+                  {user?.email ?? ''}
+                </p>
+              </div>
+            )}
+          </DropdownMenuTrigger>
+          <DropdownMenuContent side="top" align={isCollapsed ? 'center' : 'start'} className="w-52">
+            <DropdownMenuItem onClick={() => router.push('/profile')}>
+              Profile
+            </DropdownMenuItem>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem
+              variant="destructive"
+              onClick={() => signOut({ callbackUrl: '/sign-in' })}
+            >
+              <LogOut className="mr-2 h-4 w-4" />
+              Sign out
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
       </div>
     </div>
   );
@@ -206,9 +235,10 @@ interface SidebarProps {
   isMobileOpen: boolean;
   onMobileClose: () => void;
   data: SidebarData;
+  user: SessionUser | null;
 }
 
-export function Sidebar({ isCollapsed, onToggleCollapse, isMobileOpen, onMobileClose, data }: SidebarProps) {
+export function Sidebar({ isCollapsed, onToggleCollapse, isMobileOpen, onMobileClose, data, user }: SidebarProps) {
   return (
     <>
       {/* Desktop sidebar */}
@@ -219,7 +249,7 @@ export function Sidebar({ isCollapsed, onToggleCollapse, isMobileOpen, onMobileC
           isCollapsed ? 'w-14' : 'w-60'
         )}
       >
-        <SidebarContent isCollapsed={isCollapsed} onToggleCollapse={onToggleCollapse} data={data} />
+        <SidebarContent isCollapsed={isCollapsed} onToggleCollapse={onToggleCollapse} data={data} user={user} />
       </aside>
 
       {/* Mobile backdrop */}
@@ -246,7 +276,7 @@ export function Sidebar({ isCollapsed, onToggleCollapse, isMobileOpen, onMobileC
         >
           <X className="h-4 w-4" />
         </button>
-        <SidebarContent isCollapsed={false} onToggleCollapse={() => {}} data={data} />
+        <SidebarContent isCollapsed={false} onToggleCollapse={() => {}} data={data} user={user} />
       </aside>
     </>
   );
