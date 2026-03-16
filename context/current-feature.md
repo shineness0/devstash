@@ -121,6 +121,19 @@
 - Removed redundant raw `background-color`/`color` declarations from `body` in `globals.css` (`@apply` handles both)
 - Added `@@index([userId, updatedAt])` to `Collection` model via migration `20260315080019_add_collection_user_id_updated_at_index` — covers `ORDER BY updatedAt DESC` queries filtered by user
 
+### 2026-03-16 — Email Verification on Register
+
+- Installed `resend` package; created `src/lib/resend.ts` (singleton client with env guard) and `src/lib/email.ts` (`sendVerificationEmail`)
+- `POST /api/auth/register` now generates a UUID token, stores it in `VerificationToken` (24h TTL), and sends a verification email via Resend from `onboarding@resend.dev`
+- Created `GET /api/auth/verify-email` — validates token, sets `user.emailVerified`, deletes token, redirects to `/sign-in?verified=1`; expired tokens redirect to `/sign-in?error=expired_token`
+- Created `src/app/(auth)/check-email/page.tsx` — shown after registration with mail icon, user's email address, spam hint, and back-to-sign-in link
+- `src/auth.ts` credentials `authorize` throws `Error("EmailNotVerified")` for users without `emailVerified`
+- Sign-in action detects `EmailNotVerified` via `error.cause.err.message` and returns a specific message
+- Sign-in form shows success toast on `?verified=1` and error toasts for `invalid_token` / `expired_token`
+- GitHub OAuth users bypass verification entirely
+- Added `RESEND_API_KEY` to `.env.example`
+- Added `scripts/delete-test-users.ts` and `db:delete-test-users` npm script
+
 ### 2026-03-16 — Auth UI — Sign In, Register & Sign Out
 
 - Created `src/app/(auth)/sign-in/` — server page with `SignInForm` client component using `useActionState`; credentials form + GitHub OAuth button; shows success toast on redirect from register
