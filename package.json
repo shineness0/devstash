@@ -11,7 +11,8 @@
     "db:migrate": "prisma migrate dev",
     "db:seed": "prisma db seed",
     "db:studio": "prisma studio",
-    "db:test": "npx tsx scripts/test-db.ts"
+    "db:test": "npx tsx scripts/test-db.ts",
+    "db:delete-test-users": "npx tsx scripts/delete-test-users.ts"
   },
   "prisma": {
     "seed": "npx tsx prisma/seed.ts"
@@ -32,6 +33,7 @@
     "pg": "^8.20.0",
     "react": "19.2.3",
     "react-dom": "19.2.3",
+    "resend": "^6.9.3",
     "shadcn": "^4.0.6",
     "sonner": "^2.0.7",
     "tailwind-merge": "^3.5.0",

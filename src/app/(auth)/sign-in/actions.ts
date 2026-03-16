@@ -23,6 +23,10 @@ export async function signInWithCredentials(
     });
   } catch (error) {
     if (error instanceof AuthError) {
+      const cause = (error.cause as { err?: Error } | undefined)?.err;
+      if (cause?.message === 'EmailNotVerified') {
+        return 'Please verify your email before signing in. Check your inbox.';
+      }
       return 'Invalid email or password.';
     }
     throw error; // re-throw NEXT_REDIRECT

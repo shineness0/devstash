@@ -10,20 +10,25 @@ import { signInWithCredentials, signInWithGitHub } from './actions';
 
 interface SignInFormProps {
   callbackUrl: string;
-  registered?: boolean;
+  verified?: boolean;
+  urlError?: string;
 }
 
-export function SignInForm({ callbackUrl, registered }: SignInFormProps) {
+export function SignInForm({ callbackUrl, verified, urlError }: SignInFormProps) {
   const [error, formAction, isPending] = useActionState(
     signInWithCredentials.bind(null, callbackUrl),
     ''
   );
 
   useEffect(() => {
-    if (registered) {
-      toast.success('Account created! You can now sign in.');
+    if (verified) {
+      toast.success('Email verified! You can now sign in.');
+    } else if (urlError === 'invalid_token') {
+      toast.error('Invalid or already used verification link.');
+    } else if (urlError === 'expired_token') {
+      toast.error('Verification link has expired. Please register again.');
     }
-  }, [registered]);
+  }, [verified, urlError]);
 
   return (
     <div className="w-full max-w-sm space-y-6">

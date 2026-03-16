@@ -41,5 +41,5 @@ export async function registerUser(
     return { error: data.error ?? 'Registration failed. Please try again.' };
   }
 
-  redirect('/sign-in?registered=1');
+  redirect(`/check-email?email=${encodeURIComponent(email)}`);
 }
