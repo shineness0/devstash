@@ -1,20 +1,31 @@
-'use client';
+"use client";
 
-import { useActionState } from 'react';
-import Link from 'next/link';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { registerUser } from './actions';
+import { useActionState } from "react";
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { registerUser } from "./actions";
 
 export function RegisterForm() {
-  const [state, formAction, isPending] = useActionState(registerUser, { error: '' });
+  const [state, formAction, isPending] = useActionState(registerUser, {
+    error: "",
+  });
 
   return (
     <Card className="w-full max-w-sm">
       <CardHeader className="text-center">
-        <CardTitle className="text-xl font-semibold">Create an account</CardTitle>
+        <CardTitle className="text-xl font-semibold">
+          Create an account
+        </CardTitle>
         <CardDescription>Get started with DevStash</CardDescription>
       </CardHeader>
 
@@ -26,7 +37,7 @@ export function RegisterForm() {
               id="name"
               type="text"
               name="name"
-              placeholder="Brad Traversy"
+              placeholder="Dev Shineness"
               required
               autoComplete="name"
             />
@@ -68,18 +79,23 @@ export function RegisterForm() {
             />
           </div>
 
-          {state.error && <p className="text-sm text-destructive">{state.error}</p>}
+          {state.error && (
+            <p className="text-sm text-destructive">{state.error}</p>
+          )}
 
           <Button type="submit" className="w-full" disabled={isPending}>
-            {isPending ? 'Creating account…' : 'Create account'}
+            {isPending ? "Creating account…" : "Create account"}
           </Button>
         </form>
       </CardContent>
 
       <CardFooter className="justify-center">
         <p className="text-sm text-muted-foreground">
-          Already have an account?{' '}
-          <Link href="/sign-in" className="underline underline-offset-4 hover:text-foreground">
+          Already have an account?{" "}
+          <Link
+            href="/sign-in"
+            className="underline underline-offset-4 hover:text-foreground"
+          >
             Sign in
           </Link>
         </p>

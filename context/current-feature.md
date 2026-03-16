@@ -1,8 +1,16 @@
-## Current Feature
+# Current Feature
 
 ## Status
 
+<!-- Not Started | In Progress | Complete -->
+
 ## Goals
+
+<!-- What does success look like? -->
+
+## Notes
+
+<!-- Additional context, constraints, or details -->
 
 ## History
 
@@ -161,3 +169,11 @@
 - Added GitHub import and Credentials override with bcrypt validation to `src/auth.ts` — looks up user, compares hashed password, returns safe user object
 - Created `src/app/api/auth/register/route.ts` — `POST /api/auth/register` accepting name, email, password, confirmPassword with validation (match check, min 8 chars, duplicate check), bcrypt 12 rounds, returns `{ success, user }`
 - `password` field was already present on User model — no migration required
+
+### 2026-03-16 — Email Verification Toggle
+
+- Created `src/lib/config.ts` exporting `EMAIL_VERIFICATION_ENABLED` (reads `REQUIRE_EMAIL_VERIFICATION` env var, defaults `false`)
+- `POST /api/auth/register` sets `emailVerified` immediately when disabled; skips token generation and email send
+- Response includes `requiresVerification` flag; register action redirects to `/check-email` or `/sign-in?registered=1` accordingly
+- `src/auth.ts` credentials `authorize` only checks `emailVerified` when `EMAIL_VERIFICATION_ENABLED` is true
+- Updated `.env.example` with `REQUIRE_EMAIL_VERIFICATION="false"` and explanatory comment
