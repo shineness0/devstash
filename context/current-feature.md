@@ -103,6 +103,17 @@
 - Badge is hidden when sidebar is collapsed
 - `geistMono` removed from `<body>` class in `layout.tsx` (pre-existing cleanup)
 
+### 2026-03-16 — Auth Setup — NextAuth v5 + GitHub OAuth
+
+- Installed `next-auth@beta` and `@auth/prisma-adapter`
+- Created `src/auth.config.ts` — edge-compatible config with GitHub provider only (no adapter)
+- Created `src/auth.ts` — full config with `PrismaAdapter`, JWT session strategy, and `user.id` JWT/session callbacks
+- Created `src/app/api/auth/[...nextauth]/route.ts` — GET/POST handler exports
+- Created `src/proxy.ts` — Next.js 16 route protection; redirects unauthenticated users from `/dashboard/*` to sign-in with `callbackUrl`
+- Created `src/types/next-auth.d.ts` — extends `Session` type with `user.id`
+- Added `export const dynamic = 'force-dynamic'` to dashboard layout to prevent prerender failures
+- Updated `.env.example` with `AUTH_SECRET`, `AUTH_GITHUB_ID`, `AUTH_GITHUB_SECRET`
+
 ### 2026-03-15 — Code Audit Quick Wins
 
 - Added explicit `DATABASE_URL` guard in `src/lib/prisma.ts` — throws a clear error on startup if env var is missing (replaces `!` non-null assertion)
