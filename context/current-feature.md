@@ -121,6 +121,13 @@
 - Removed redundant raw `background-color`/`color` declarations from `body` in `globals.css` (`@apply` handles both)
 - Added `@@index([userId, updatedAt])` to `Collection` model via migration `20260315080019_add_collection_user_id_updated_at_index` — covers `ORDER BY updatedAt DESC` queries filtered by user
 
+### 2026-03-16 — Auth Pages Redesign — Card Layout + Labeled Inputs
+
+- Installed ShadCN `Card` and `Label` components
+- `SignInForm`, `RegisterForm`, and `check-email` page content wrapped in `Card` with `CardHeader`, `CardContent`, `CardFooter`
+- All inputs on sign-in and register now have explicit `<Label>` with `htmlFor`/`id` pairing
+- Title and description in `CardHeader`; fields/buttons in `CardContent`; footer nav links in `CardFooter`
+
 ### 2026-03-16 — Email Verification on Register
 
 - Installed `resend` package; created `src/lib/resend.ts` (singleton client with env guard) and `src/lib/email.ts` (`sendVerificationEmail`)
