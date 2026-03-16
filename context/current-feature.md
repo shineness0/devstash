@@ -121,6 +121,20 @@
 - Removed redundant raw `background-color`/`color` declarations from `body` in `globals.css` (`@apply` handles both)
 - Added `@@index([userId, updatedAt])` to `Collection` model via migration `20260315080019_add_collection_user_id_updated_at_index` — covers `ORDER BY updatedAt DESC` queries filtered by user
 
+### 2026-03-16 — Auth UI — Sign In, Register & Sign Out
+
+- Created `src/app/(auth)/sign-in/` — server page with `SignInForm` client component using `useActionState`; credentials form + GitHub OAuth button; shows success toast on redirect from register
+- Created `src/app/(auth)/register/` — server page with `RegisterForm` client component; validates and posts to `/api/auth/register`; redirects to `/sign-in?registered=1` on success
+- Both auth pages grouped under `(auth)` route group
+- Created `src/components/shared/UserAvatar.tsx` — reusable avatar: uses GitHub `image` if present, otherwise generates initials from name
+- Created `src/components/shared/WelcomeToast.tsx` — client component that fires a sign-in success toast when `?welcome=1` is in the URL, then removes the param
+- Sidebar bottom area now shows real session user (avatar via `UserAvatar`, name, email)
+- Avatar triggers a `DropdownMenu` with Profile navigation and Sign out (redirects to `/sign-in`)
+- Installed ShadCN `DropdownMenu` (Base UI) and `Sonner` toast components; `<Toaster />` added to root layout
+- Updated `auth.config.ts` with `pages.signIn: '/sign-in'` to use custom sign-in page
+- Updated `proxy.ts` to redirect unauthenticated users to `/sign-in` instead of `/api/auth/signin`
+- Sign-in actions append `?welcome=1` to redirect URL for post-login toast trigger
+
 ### 2026-03-16 — Auth Credentials — Email/Password Provider
 
 - Added Credentials provider placeholder (`authorize: () => null`) to `src/auth.config.ts` (edge-compatible)
