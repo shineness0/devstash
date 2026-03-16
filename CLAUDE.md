@@ -19,3 +19,12 @@ Read the following to get the full context of the project:
 - **Lint**: `npm run lint`
 
 **IMPORTANT:** Do not add Claude to any commit messages
+
+## Neon MCP
+
+When using the Neon MCP tool for any database operations:
+
+- **Project**: Always use the `devstash` project
+- **Branch**: Always use the `development` branch
+- **NEVER** run any operations against the production branch unless explicitly told to do so
+- Before any destructive operation (migrations, deletes, schema changes), confirm the target branch is `development`

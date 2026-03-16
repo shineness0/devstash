@@ -1,3 +1,5 @@
+export const dynamic = 'force-dynamic';
+
 import { DashboardShell } from '@/components/layout/DashboardShell';
 import { getSidebarData } from '@/lib/db/sidebar';
 
