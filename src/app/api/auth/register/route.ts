@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
 import { prisma } from "@/lib/prisma";
 import { sendVerificationEmail } from "@/lib/email";
+import { EMAIL_VERIFICATION_ENABLED } from "@/lib/config";
 
 export async function POST(request: Request) {
   const body = await request.json();
@@ -39,19 +40,30 @@ export async function POST(request: Request) {
   const hashedPassword = await bcrypt.hash(password, 12);
 
   const user = await prisma.user.create({
-    data: { name: name ?? null, email, password: hashedPassword },
+    data: {
+      name: name ?? null,
+      email,
+      password: hashedPassword,
+      // Mark as verified immediately when verification is disabled
+      emailVerified: EMAIL_VERIFICATION_ENABLED ? null : new Date(),
+    },
     select: { id: true, email: true, name: true },
   });
 
-  // Generate and store verification token (expires in 24h)
-  const token = crypto.randomUUID();
-  const expires = new Date(Date.now() + 24 * 60 * 60 * 1000);
+  if (EMAIL_VERIFICATION_ENABLED) {
+    // Generate and store verification token (expires in 24h)
+    const token = crypto.randomUUID();
+    const expires = new Date(Date.now() + 24 * 60 * 60 * 1000);
 
-  await prisma.verificationToken.create({
-    data: { identifier: email, token, expires },
-  });
+    await prisma.verificationToken.create({
+      data: { identifier: email, token, expires },
+    });
 
-  await sendVerificationEmail(user.name, user.email, token);
+    await sendVerificationEmail(user.name, user.email, token);
+  }
 
-  return NextResponse.json({ success: true, user }, { status: 201 });
+  return NextResponse.json(
+    { success: true, user, requiresVerification: EMAIL_VERIFICATION_ENABLED },
+    { status: 201 }
+  );
 }
