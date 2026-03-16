@@ -1,27 +1,8 @@
-## Current Feature: Auth Credentials - Email/Password Provider
+## Current Feature
 
 ## Status
 
-In Progress
-
 ## Goals
-
-- Add `password` field to User model (if not already present) via migration
-- Add Credentials provider placeholder (`authorize: () => null`) to `auth.config.ts`
-- Override Credentials provider in `auth.ts` with bcrypt validation logic
-- Create `POST /api/auth/register` route accepting name, email, password, confirmPassword
-  - Validate passwords match
-  - Check if user already exists
-  - Hash password with bcryptjs
-  - Create user in DB
-  - Return success/error response
-
-## Notes
-
-- bcryptjs is already installed
-- Follow the split-config pattern: placeholder in `auth.config.ts`, real logic in `auth.ts`
-- GitHub OAuth must continue to work after this change
-- Test: registration via curl, then sign in at `/api/auth/signin`, verify redirect to `/dashboard`
 
 ## History
 
@@ -139,3 +120,10 @@ In Progress
 - Extracted `TYPE_ICON_MAP` to `src/lib/constants/item-types.ts` — consolidated duplicate icon maps from `ItemCard.tsx`, `CollectionCard.tsx`, and `Sidebar.tsx` into a single shared constant
 - Removed redundant raw `background-color`/`color` declarations from `body` in `globals.css` (`@apply` handles both)
 - Added `@@index([userId, updatedAt])` to `Collection` model via migration `20260315080019_add_collection_user_id_updated_at_index` — covers `ORDER BY updatedAt DESC` queries filtered by user
+
+### 2026-03-16 — Auth Credentials — Email/Password Provider
+
+- Added Credentials provider placeholder (`authorize: () => null`) to `src/auth.config.ts` (edge-compatible)
+- Added GitHub import and Credentials override with bcrypt validation to `src/auth.ts` — looks up user, compares hashed password, returns safe user object
+- Created `src/app/api/auth/register/route.ts` — `POST /api/auth/register` accepting name, email, password, confirmPassword with validation (match check, min 8 chars, duplicate check), bcrypt 12 rounds, returns `{ success, user }`
+- `password` field was already present on User model — no migration required
