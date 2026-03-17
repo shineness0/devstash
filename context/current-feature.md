@@ -1,16 +1,24 @@
-# Current Feature
+# Current Feature — Profile Page
 
 ## Status
 
-<!-- Not Started | In Progress | Complete -->
+In Progress
 
 ## Goals
 
-<!-- What does success look like? -->
+- `/profile` route exists and is protected (requires auth)
+- Displays user info: avatar (GitHub or initials), name, email, account creation date
+- Shows usage stats: total items, total collections, breakdown by item type
+- Change password section visible only for email/password users (not GitHub OAuth)
+- Delete account with confirmation dialog to prevent accidental deletion
 
 ## Notes
 
-<!-- Additional context, constraints, or details -->
+- Avatar: reuse existing `UserAvatar` component (GitHub image or initials)
+- Change password: only show for users without a linked GitHub `Account` record (i.e. email/password users)
+- Delete account: needs a confirmation dialog (ShadCN `AlertDialog`); cascades via Prisma `onDelete: Cascade`
+- Item type breakdown: counts per type (snippet, prompt, command, note, link, file, image)
+- Follow existing server component + Prisma data fetching patterns
 
 ## History
 
