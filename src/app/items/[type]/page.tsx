@@ -1,7 +1,7 @@
 import { notFound, redirect } from 'next/navigation';
 import { auth } from '@/auth';
 import { getItemsByType } from '@/lib/db/items';
-import { ItemCard } from '@/components/dashboard/ItemCard';
+import { ItemsClientWrapper } from '@/components/items/ItemsClientWrapper';
 import { TYPE_ICON_MAP } from '@/lib/constants/item-types';
 
 // Sidebar links use plural slugs (e.g. /items/snippets); DB names are singular
@@ -44,11 +44,10 @@ export default async function ItemsTypePage({ params }: Props) {
       {items.length === 0 ? (
         <p className="text-sm text-muted-foreground">No {slug} yet.</p>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
-          {items.map((item) => (
-            <ItemCard key={item.id} item={item} />
-          ))}
-        </div>
+        <ItemsClientWrapper
+          items={items}
+          gridClassName="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3"
+        />
       )}
     </div>
   );
