@@ -170,6 +170,16 @@
 - Created `src/app/api/auth/register/route.ts` — `POST /api/auth/register` accepting name, email, password, confirmPassword with validation (match check, min 8 chars, duplicate check), bcrypt 12 rounds, returns `{ success, user }`
 - `password` field was already present on User model — no migration required
 
+### 2026-03-17 — Forgot Password
+
+- Added `sendPasswordResetEmail` to `src/lib/email.ts`; applied `escapeHtml` to `displayName` in both email functions to prevent XSS
+- `POST /api/auth/forgot-password` — generates UUID token stored in `VerificationToken` with `reset:<email>` identifier (1h TTL), sends reset email; always returns `{ success: true }` to prevent email enumeration; silently skips GitHub OAuth users (no password)
+- `POST /api/auth/reset-password` — validates token, checks `reset:` prefix, checks expiry, updates bcrypt hash (12 rounds), deletes token (single-use); added `typeof` guards on password fields
+- Created `/forgot-password` page with `ForgotPasswordForm` client component (email input, success state after submit)
+- Created `/reset-password?token=...` page — server page redirects to `/forgot-password` if token absent; passes token to `ResetPasswordForm` client component
+- `ResetPasswordForm` redirects to `/sign-in?password_reset=1` on success; `SignInForm` fires success toast on that param (consistent with `?verified=1` pattern)
+- Added "Forgot password?" link inline with Password label on sign-in form
+
 ### 2026-03-16 — Email Verification Toggle
 
 - Created `src/lib/config.ts` exporting `EMAIL_VERIFICATION_ENABLED` (reads `REQUIRE_EMAIL_VERIFICATION` env var, defaults `false`)
