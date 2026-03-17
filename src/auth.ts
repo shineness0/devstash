@@ -6,6 +6,7 @@ import bcrypt from "bcryptjs";
 import { prisma } from "@/lib/prisma";
 import authConfig from "./auth.config";
 import { EMAIL_VERIFICATION_ENABLED } from "@/lib/config";
+import { checkRateLimitMessage, loginLimiter, getIP, TOO_MANY_ATTEMPTS_PREFIX } from "@/lib/rate-limit";
 
 export const { auth, handlers, signIn, signOut } = NextAuth({
   adapter: PrismaAdapter(prisma),
@@ -30,8 +31,16 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
         email: { label: "Email", type: "email" },
         password: { label: "Password", type: "password" },
       },
-      async authorize(credentials) {
+      async authorize(credentials, request) {
         if (!credentials?.email || !credentials?.password) return null;
+
+        const ip = request ? getIP(request) : "unknown";
+        const email = credentials.email as string;
+        const rateLimitMessage = await checkRateLimitMessage(
+          loginLimiter,
+          `login:${ip}:${email}`
+        );
+        if (rateLimitMessage) throw new Error(`${TOO_MANY_ATTEMPTS_PREFIX}${rateLimitMessage}`);
 
         const user = await prisma.user.findUnique({
           where: { email: credentials.email as string },

@@ -3,6 +3,7 @@
 import { signIn } from '@/auth';
 import { AuthError } from 'next-auth';
 import { redirect } from 'next/navigation';
+import { TOO_MANY_ATTEMPTS_PREFIX } from '@/lib/rate-limit';
 
 function withWelcome(url: string): string {
   const u = new URL(url, 'http://localhost');
@@ -26,6 +27,9 @@ export async function signInWithCredentials(
       const cause = (error.cause as { err?: Error } | undefined)?.err;
       if (cause?.message === 'EmailNotVerified') {
         return 'Please verify your email before signing in. Check your inbox.';
+      }
+      if (cause?.message?.startsWith(TOO_MANY_ATTEMPTS_PREFIX)) {
+        return cause.message.slice(TOO_MANY_ATTEMPTS_PREFIX.length);
       }
       return 'Invalid email or password.';
     }
