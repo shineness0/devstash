@@ -16,6 +16,16 @@
 
 <!-- Keep this updated. Earliest to latest -->
 
+### 2026-03-17 — Item Drawer
+
+- Installed shadcn `Sheet` and `Skeleton` components
+- Added `getItemById(id, userId)` to `src/lib/db/items.ts` — full detail query including collections, tags; exported `ItemDetail` type
+- Created `GET /api/items/[id]` — auth-gated, user-scoped; returns 401/404 as appropriate
+- Created `src/components/items/ItemDrawer.tsx` — shadcn Sheet opening from right; action bar (Favorite, Pin, Copy, Edit, Delete — unimplemented actions visually disabled); description, content (with Copy button), URL, collections, tags, created/updated dates; URL sanitized to http/https only; clipboard write awaited with error fallback
+- Created `src/components/items/ItemsClientWrapper.tsx` — client component wrapping item card grids; manages drawer open/close state; fetches full item on card click; shows skeleton while loading; toast + close on fetch error
+- Updated `src/app/dashboard/page.tsx` — pinned and recent item grids use `ItemsClientWrapper`
+- Updated `src/app/items/[type]/page.tsx` — type item grid uses `ItemsClientWrapper`
+
 ### 2026-03-17 — Item Listing 3-Column Grid
 
 - Updated `src/app/items/[type]/page.tsx` grid from `grid-cols-1 md:grid-cols-2` to `grid-cols-1 md:grid-cols-2 lg:grid-cols-3`
