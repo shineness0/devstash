@@ -1,3 +1,4 @@
+import React from 'react';
 import { Star, Pin } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { TYPE_ICON_MAP } from '@/lib/constants/item-types';
@@ -13,7 +14,10 @@ export function ItemCard({ item }: { item: ItemWithType }) {
     : item.url || item.description || '';
 
   return (
-    <div className="group relative flex flex-col rounded-lg border border-border bg-card p-4 hover:border-border/60 transition-colors">
+    <div
+      className="group relative flex flex-col rounded-lg border border-border border-l-2 border-l-[var(--item-accent)] bg-card p-4 hover:border-border/60 transition-colors"
+      style={{ '--item-accent': itemType.color } as React.CSSProperties}
+    >
       {/* Top-right indicators */}
       <div className="absolute top-2.5 right-2.5 flex items-center gap-1">
         {item.isPinned && (
