@@ -200,3 +200,15 @@
 - Response includes `requiresVerification` flag; register action redirects to `/check-email` or `/sign-in?registered=1` accordingly
 - `src/auth.ts` credentials `authorize` only checks `emailVerified` when `EMAIL_VERIFICATION_ENABLED` is true
 - Updated `.env.example` with `REQUIRE_EMAIL_VERIFICATION="false"` and explanatory comment
+
+### 2026-03-17 — Rate Limiting for Auth
+
+- Installed `@upstash/ratelimit` and `@upstash/redis`
+- Created `src/lib/rate-limit.ts` — reusable utility with `checkRateLimit()` (returns 429 `NextResponse` for API routes), `checkRateLimitMessage()` (returns string for `authorize()`), `getIP()` (prefers `x-real-ip` over last `x-forwarded-for` segment to prevent spoofing), and shared `TOO_MANY_ATTEMPTS_PREFIX` constant
+- Login: 5 req/15min per IP+email — `fixedWindow` (prevents lockout extension from retries)
+- Register: 3 req/hr per IP — sliding window
+- Forgot-password: 3 req/hr per IP — sliding window
+- Reset-password: 5 req/15min per IP — sliding window
+- Login limiting applied inside NextAuth `authorize()` in `src/auth.ts`; error surfaced via `TooManyAttempts:` prefix caught in `sign-in/actions.ts`
+- All limiters fail open (allow request) when Upstash env vars are not set
+- Added `UPSTASH_REDIS_REST_URL` and `UPSTASH_REDIS_REST_TOKEN` to `.env.example`
