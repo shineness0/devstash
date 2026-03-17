@@ -16,6 +16,11 @@
 
 <!-- Keep this updated. Earliest to latest -->
 
+### 2026-03-17 — Item Listing 3-Column Grid
+
+- Updated `src/app/items/[type]/page.tsx` grid from `grid-cols-1 md:grid-cols-2` to `grid-cols-1 md:grid-cols-2 lg:grid-cols-3`
+- Items list view now shows 3 columns on large screens (≥1024px), 2 on medium, 1 on mobile
+
 ### 2026-03-13 — Prisma 7 + Neon PostgreSQL Setup
 
 - Installed Prisma 7 with `@prisma/adapter-pg`, `pg`, and `tsx` dev tooling
