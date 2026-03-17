@@ -1,25 +1,16 @@
-# Current Feature: Items List View
+# Current Feature
 
 ## Status
 
-In Progress
+<!-- Not Started | In Progress | Complete -->
 
 ## Goals
 
-- Create dynamic route `/items/[type]` (e.g., /items/snippets, /items/notes)
-- Fetch and display items filtered by type from the database
-- Responsive grid of ItemCard components
-- Two columns on medium and up
-- Each card has left border colored by item type
-- Follow existing codebase patterns
+<!-- What does success look like? -->
 
 ## Notes
 
-- Route already referenced in sidebar links (`/items/[typename]`)
-- Reuse existing `ItemCard` component from dashboard
-- Use `auth()` to get current user and scope items to them
-- Fetch items server-side with Prisma, filtered by item type name
-- Add the route to proxy protection in `src/proxy.ts`
+<!-- Additional context, constraints, or details -->
 
 ## History
 
@@ -221,3 +212,14 @@ In Progress
 - Login limiting applied inside NextAuth `authorize()` in `src/auth.ts`; error surfaced via `TooManyAttempts:` prefix caught in `sign-in/actions.ts`
 - All limiters fail open (allow request) when Upstash env vars are not set
 - Added `UPSTASH_REDIS_REST_URL` and `UPSTASH_REDIS_REST_TOKEN` to `.env.example`
+
+### 2026-03-17 — Items List View
+
+- Created dynamic route `src/app/items/[type]/` with layout and page server components
+- `layout.tsx` reuses `DashboardShell` with sidebar (mirrors dashboard/profile pattern)
+- `page.tsx` maps plural URL slugs (e.g. `snippets`) to singular DB type names (e.g. `snippet`); returns 404 for unknown slugs
+- Added `getItemsByType(userId, typeName)` to `src/lib/db/items.ts` — scoped to current user, filtered by item type name
+- Added optional `userId` param to `getPinnedItems()` and `getRecentItems()` for future user-scoped calls (non-breaking)
+- Responsive 2-column grid (`grid-cols-1 md:grid-cols-2`) of existing `ItemCard` components
+- Left border color handled by `ItemCard` via `--item-accent` CSS variable
+- Added `/items` to proxy protection in `src/proxy.ts`
