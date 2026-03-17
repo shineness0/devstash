@@ -1,24 +1,16 @@
-# Current Feature — Profile Page
+# Current Feature
 
 ## Status
 
-In Progress
+<!-- Not Started | In Progress | Complete -->
 
 ## Goals
 
-- `/profile` route exists and is protected (requires auth)
-- Displays user info: avatar (GitHub or initials), name, email, account creation date
-- Shows usage stats: total items, total collections, breakdown by item type
-- Change password section visible only for email/password users (not GitHub OAuth)
-- Delete account with confirmation dialog to prevent accidental deletion
+<!-- What does success look like? -->
 
 ## Notes
 
-- Avatar: reuse existing `UserAvatar` component (GitHub image or initials)
-- Change password: only show for users without a linked GitHub `Account` record (i.e. email/password users)
-- Delete account: needs a confirmation dialog (ShadCN `AlertDialog`); cascades via Prisma `onDelete: Cascade`
-- Item type breakdown: counts per type (snippet, prompt, command, note, link, file, image)
-- Follow existing server component + Prisma data fetching patterns
+<!-- Additional context, constraints, or details -->
 
 ## History
 
@@ -187,6 +179,19 @@ In Progress
 - Created `/reset-password?token=...` page — server page redirects to `/forgot-password` if token absent; passes token to `ResetPasswordForm` client component
 - `ResetPasswordForm` redirects to `/sign-in?password_reset=1` on success; `SignInForm` fires success toast on that param (consistent with `?verified=1` pattern)
 - Added "Forgot password?" link inline with Password label on sign-in form
+
+### 2026-03-17 — Profile Page
+
+- Created `src/lib/db/profile.ts` with `getProfileData(userId)` — fetches user info, GitHub account detection, item type breakdown, total items/collections in parallel
+- Added `/profile` to proxy protection in `src/proxy.ts`
+- Created `src/app/profile/layout.tsx` — reuses `DashboardShell` with sidebar (mirrors dashboard layout pattern)
+- Created `src/app/profile/page.tsx` — server component displaying: account card (avatar, name, email, account type, member since), usage stats (totals + per-type breakdown), conditional change password form, danger zone with delete account
+- Created `src/app/profile/ChangePasswordForm.tsx` — client component; validates current password, POSTs to API, shows inline error or success toast
+- Created `src/app/profile/DeleteAccountDialog.tsx` — `AlertDialog` confirmation before DELETE; redirects to `/sign-in` after deletion
+- Created `POST /api/profile/change-password` — auth-gated; validates current bcrypt password, updates hash (12 rounds)
+- Created `DELETE /api/profile/delete-account` — auth-gated; deletes user (all items/collections cascade)
+- Installed ShadCN `AlertDialog` (Base UI variant)
+- Change password section hidden for GitHub OAuth users (no password field)
 
 ### 2026-03-16 — Email Verification Toggle
 
