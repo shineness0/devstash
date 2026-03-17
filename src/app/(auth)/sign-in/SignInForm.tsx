@@ -13,24 +13,27 @@ import { signInWithCredentials, signInWithGitHub } from './actions';
 interface SignInFormProps {
   callbackUrl: string;
   verified?: boolean;
+  passwordReset?: boolean;
   urlError?: string;
 }
 
-export function SignInForm({ callbackUrl, verified, urlError }: SignInFormProps) {
+export function SignInForm({ callbackUrl, verified, passwordReset, urlError }: SignInFormProps) {
   const [error, formAction, isPending] = useActionState(
     signInWithCredentials.bind(null, callbackUrl),
     ''
   );
 
   useEffect(() => {
-    if (verified) {
+    if (passwordReset) {
+      toast.success('Password reset! You can now sign in with your new password.');
+    } else if (verified) {
       toast.success('Email verified! You can now sign in.');
     } else if (urlError === 'invalid_token') {
       toast.error('Invalid or already used verification link.');
     } else if (urlError === 'expired_token') {
       toast.error('Verification link has expired. Please register again.');
     }
-  }, [verified, urlError]);
+  }, [verified, passwordReset, urlError]);
 
   return (
     <Card className="w-full max-w-sm">
@@ -54,7 +57,12 @@ export function SignInForm({ callbackUrl, verified, urlError }: SignInFormProps)
           </div>
 
           <div className="space-y-1.5">
-            <Label htmlFor="password">Password</Label>
+            <div className="flex items-center justify-between">
+              <Label htmlFor="password">Password</Label>
+              <Link href="/forgot-password" className="text-xs text-muted-foreground underline underline-offset-4 hover:text-foreground">
+                Forgot password?
+              </Link>
+            </div>
             <Input
               id="password"
               type="password"
