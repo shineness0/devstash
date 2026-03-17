@@ -1,16 +1,25 @@
-# Current Feature
+# Current Feature: Items List View
 
 ## Status
 
-<!-- Not Started | In Progress | Complete -->
+In Progress
 
 ## Goals
 
-<!-- What does success look like? -->
+- Create dynamic route `/items/[type]` (e.g., /items/snippets, /items/notes)
+- Fetch and display items filtered by type from the database
+- Responsive grid of ItemCard components
+- Two columns on medium and up
+- Each card has left border colored by item type
+- Follow existing codebase patterns
 
 ## Notes
 
-<!-- Additional context, constraints, or details -->
+- Route already referenced in sidebar links (`/items/[typename]`)
+- Reuse existing `ItemCard` component from dashboard
+- Use `auth()` to get current user and scope items to them
+- Fetch items server-side with Prisma, filtered by item type name
+- Add the route to proxy protection in `src/proxy.ts`
 
 ## History
 

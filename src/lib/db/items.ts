@@ -2,9 +2,9 @@ import { prisma } from '@/lib/prisma';
 
 export type ItemWithType = Awaited<ReturnType<typeof getPinnedItems>>[number];
 
-export async function getPinnedItems() {
+export async function getPinnedItems(userId?: string) {
   return prisma.item.findMany({
-    where: { isPinned: true },
+    where: { isPinned: true, ...(userId ? { userId } : {}) },
     orderBy: { updatedAt: 'desc' },
     include: {
       itemType: { select: { id: true, name: true, color: true } },
@@ -13,10 +13,25 @@ export async function getPinnedItems() {
   });
 }
 
-export async function getRecentItems(limit = 10) {
+export async function getRecentItems(limit = 10, userId?: string) {
   return prisma.item.findMany({
+    where: userId ? { userId } : {},
     orderBy: { createdAt: 'desc' },
     take: limit,
+    include: {
+      itemType: { select: { id: true, name: true, color: true } },
+      tags: { select: { id: true, name: true } },
+    },
+  });
+}
+
+export async function getItemsByType(userId: string, typeName: string) {
+  return prisma.item.findMany({
+    where: {
+      userId,
+      itemType: { name: typeName },
+    },
+    orderBy: { createdAt: 'desc' },
     include: {
       itemType: { select: { id: true, name: true, color: true } },
       tags: { select: { id: true, name: true } },
