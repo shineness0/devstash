@@ -1,33 +1,29 @@
-# Current Feature — Item Drawer Edit Mode
+# Current Feature
 
 ## Status
 
-In Progress
+<!-- Not Started | In Progress | Complete -->
 
 ## Goals
 
-- Clicking Edit in the item drawer's action bar switches to inline edit mode
-- Edit mode replaces the action bar with Save and Cancel buttons
-- Cancel discards changes and returns to view mode
-- Save persists changes via server action, returns to view mode, refreshes drawer data
-- Toast notification on save success or error
-- All editable fields work correctly: title (required), description, tags (comma-separated)
-- Type-specific fields shown conditionally: content (snippet/prompt/command/note), language (snippet/command), URL (link)
-- Non-editable fields remain display-only: item type, collections, created/updated dates
-- `router.refresh()` called after save so underlying card list reflects changes
+<!-- What does success look like? -->
 
 ## Notes
 
-- Server action: `updateItem(itemId, data)` in `src/actions/items.ts` — `{ success, data, error }` pattern
-- DB query: `updateItem` in `src/lib/db/items.ts` — disconnect all tags, connect-or-create new ones, return updated `ItemDetail`
-- Zod validation in server action: title (non-empty trimmed), description (string|null), content (string|null), url (valid URL|null), language (string|null), tags (trimmed non-empty string array)
-- No form library — controlled inputs with local state
-- Disable Save button client-side when title is empty
-- Content textarea is plain text (no code editor yet)
+<!-- Additional context, constraints, or details -->
 
 ## History
 
 <!-- Keep this updated. Earliest to latest -->
+
+### 2026-03-18 — Item Drawer Edit Mode
+
+- Created `src/actions/items.ts` — `updateItem` server action with Zod validation (`{ success, data, error }` pattern); auth-gated and user-scoped via DB query
+- Added `updateItem(id, userId, data)` to `src/lib/db/items.ts` — disconnects all tags, connect-or-creates new ones, returns full `ItemDetail`
+- Updated `src/components/items/ItemDrawer.tsx` — Edit button now active; toggles inline edit mode with controlled inputs; Save/Cancel replaces action bar; type-conditional fields (content for snippet/prompt/command/note, language for snippet/command, URL for link); `router.refresh()` after save
+- Updated `src/components/items/ItemsClientWrapper.tsx` — passes `onItemUpdate` callback to refresh drawer state after save
+- Installed `zod` and shadcn `Textarea` component
+- Added 14 unit tests in `src/actions/items.test.ts` covering auth, Zod validation, happy path, and DB error handling
 
 ### 2026-03-17 — Item Drawer
 
