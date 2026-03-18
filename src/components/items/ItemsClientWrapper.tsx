@@ -44,6 +44,10 @@ export function ItemsClientWrapper({ items, gridClassName }: ItemsClientWrapperP
     setLoading(false);
   }, []);
 
+  const handleItemUpdate = useCallback((updated: ItemDetail) => {
+    setDrawerItem(updated);
+  }, []);
+
   return (
     <>
       <div className={gridClassName}>
@@ -63,6 +67,7 @@ export function ItemsClientWrapper({ items, gridClassName }: ItemsClientWrapperP
         item={drawerItem}
         loading={loading}
         onClose={handleClose}
+        onItemUpdate={handleItemUpdate}
       />
     </>
   );
