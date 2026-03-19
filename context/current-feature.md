@@ -16,6 +16,16 @@
 
 <!-- Keep this updated. Earliest to latest -->
 
+### 2026-03-19 — New Item Modal
+
+- Installed shadcn `Dialog` and `Select` components
+- Added `createItem(userId, data)` to `src/lib/db/items.ts` — creates item with tags (connect-or-create), returns full `ItemDetail`
+- Added `getItemTypes()` to `src/lib/db/items.ts` — fetches system item types for the type selector
+- Added `createItem` server action to `src/actions/items.ts` — Zod-validated, auth-gated, `{ success, data, error }` pattern
+- Created `src/components/items/NewItemModal.tsx` — shadcn `Dialog` with type-conditional fields: Content (snippet/prompt/command/note), Language (snippet/command), URL (link); form resets on close; success toast + `router.refresh()` on create
+- Updated `src/components/layout/DashboardShell.tsx` — manages `newItemOpen` state; passes `sidebarData.itemTypes` to modal
+- Updated `src/components/layout/TopBar.tsx` — "New Item" button calls `onNewItem` prop
+
 ### 2026-03-19 — Item Delete
 
 - Added `deleteItem(id, userId)` to `src/lib/db/items.ts` — user-scoped Prisma delete
