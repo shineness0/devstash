@@ -6,9 +6,10 @@ import { Menu, Plus, Search } from 'lucide-react';
 
 interface TopBarProps {
   onMenuClick?: () => void;
+  onNewItem?: () => void;
 }
 
-export function TopBar({ onMenuClick }: TopBarProps) {
+export function TopBar({ onMenuClick, onNewItem }: TopBarProps) {
   return (
     <header className="flex h-14 shrink-0 items-center gap-4 border-b border-border bg-background px-4 lg:px-6">
       <button
@@ -27,7 +28,7 @@ export function TopBar({ onMenuClick }: TopBarProps) {
           <Input placeholder="Search..." className="pl-9" />
         </div>
       </div>
-      <Button size="sm" className="gap-2 shrink-0">
+      <Button size="sm" className="gap-2 shrink-0" onClick={onNewItem}>
         <Plus className="h-4 w-4" />
         <span className="hidden sm:inline">New Item</span>
       </Button>

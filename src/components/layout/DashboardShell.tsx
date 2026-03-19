@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { TopBar } from './TopBar';
 import { Sidebar } from './Sidebar';
+import { NewItemModal } from '@/components/items/NewItemModal';
 import type { SidebarData } from '@/lib/db/sidebar';
 import type { Session } from 'next-auth';
 
@@ -17,10 +18,14 @@ interface DashboardShellProps {
 export function DashboardShell({ children, sidebarData, user }: DashboardShellProps) {
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [isMobileOpen, setIsMobileOpen] = useState(false);
+  const [newItemOpen, setNewItemOpen] = useState(false);
 
   return (
     <div className="flex h-screen flex-col bg-background text-foreground">
-      <TopBar onMenuClick={() => setIsMobileOpen(true)} />
+      <TopBar
+        onMenuClick={() => setIsMobileOpen(true)}
+        onNewItem={() => setNewItemOpen(true)}
+      />
       <div className="flex flex-1 overflow-hidden">
         <Sidebar
           isCollapsed={isCollapsed}
@@ -32,6 +37,12 @@ export function DashboardShell({ children, sidebarData, user }: DashboardShellPr
         />
         <main className="flex-1 overflow-auto">{children}</main>
       </div>
+
+      <NewItemModal
+        open={newItemOpen}
+        onOpenChange={setNewItemOpen}
+        itemTypes={sidebarData.itemTypes}
+      />
     </div>
   );
 }

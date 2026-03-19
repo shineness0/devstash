@@ -88,6 +88,55 @@ export async function deleteItem(id: string, userId: string) {
   });
 }
 
+export async function createItem(
+  userId: string,
+  data: {
+    title: string;
+    itemTypeId: string;
+    description: string | null;
+    content: string | null;
+    url: string | null;
+    language: string | null;
+    tags: string[];
+  }
+) {
+  return prisma.item.create({
+    data: {
+      title: data.title,
+      contentType: data.url ? 'URL' : 'TEXT',
+      description: data.description,
+      content: data.content,
+      url: data.url,
+      language: data.language,
+      userId,
+      itemTypeId: data.itemTypeId,
+      tags: {
+        connectOrCreate: data.tags.map((name) => ({
+          where: { name },
+          create: { name },
+        })),
+      },
+    },
+    include: {
+      itemType: { select: { id: true, name: true, color: true } },
+      tags: { select: { id: true, name: true } },
+      collections: {
+        include: {
+          collection: { select: { id: true, name: true } },
+        },
+      },
+    },
+  });
+}
+
+export async function getItemTypes() {
+  return prisma.itemType.findMany({
+    where: { isSystem: true },
+    orderBy: { name: 'asc' },
+    select: { id: true, name: true, color: true },
+  });
+}
+
 export async function getItemsByType(userId: string, typeName: string) {
   return prisma.item.findMany({
     where: {
