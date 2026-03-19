@@ -10,13 +10,23 @@ import {
   SheetHeader,
   SheetTitle,
 } from '@/components/ui/sheet';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { TYPE_ICON_MAP } from '@/lib/constants/item-types';
-import { updateItem } from '@/actions/items';
+import { updateItem, deleteItem } from '@/actions/items';
 import type { ItemDetail } from '@/lib/db/items';
 
 interface ItemDrawerProps {
@@ -25,9 +35,10 @@ interface ItemDrawerProps {
   loading: boolean;
   onClose: () => void;
   onItemUpdate: (item: ItemDetail) => void;
+  onItemDelete: () => void;
 }
 
-export function ItemDrawer({ itemId, item, loading, onClose, onItemUpdate }: ItemDrawerProps) {
+export function ItemDrawer({ itemId, item, loading, onClose, onItemUpdate, onItemDelete }: ItemDrawerProps) {
   const open = itemId !== null;
 
   async function handleCopyContent() {
@@ -51,6 +62,7 @@ export function ItemDrawer({ itemId, item, loading, onClose, onItemUpdate }: Ite
             item={item}
             onCopyContent={handleCopyContent}
             onItemUpdate={onItemUpdate}
+            onItemDelete={onItemDelete}
           />
         )}
       </SheetContent>
@@ -84,9 +96,10 @@ interface DrawerContentProps {
   item: ItemDetail;
   onCopyContent: () => void;
   onItemUpdate: (item: ItemDetail) => void;
+  onItemDelete: () => void;
 }
 
-function DrawerContent({ item, onCopyContent, onItemUpdate }: DrawerContentProps) {
+function DrawerContent({ item, onCopyContent, onItemUpdate, onItemDelete }: DrawerContentProps) {
   const router = useRouter();
   const Icon = TYPE_ICON_MAP[item.itemType.name] ?? null;
   const isCode = item.itemType.name === 'snippet' || item.itemType.name === 'command';
@@ -105,6 +118,23 @@ function DrawerContent({ item, onCopyContent, onItemUpdate }: DrawerContentProps
   // Edit state
   const [isEditing, setIsEditing] = useState(false);
   const [saving, setSaving] = useState(false);
+
+  // Delete state
+  const [deleteOpen, setDeleteOpen] = useState(false);
+  const [deleting, setDeleting] = useState(false);
+
+  async function handleDelete() {
+    setDeleting(true);
+    const result = await deleteItem(item.id);
+    setDeleting(false);
+    if (result.success) {
+      toast.success('Item deleted');
+      onItemDelete();
+      router.refresh();
+    } else {
+      toast.error(result.error ?? 'Failed to delete item');
+    }
+  }
   const [title, setTitle] = useState(item.title);
   const [description, setDescription] = useState(item.description ?? '');
   const [content, setContent] = useState(item.content ?? '');
@@ -219,7 +249,7 @@ function DrawerContent({ item, onCopyContent, onItemUpdate }: DrawerContentProps
             <ActionButton
               icon={<Trash2 className="h-4 w-4 text-destructive" />}
               tooltip="Delete"
-              disabled
+              onClick={() => setDeleteOpen(true)}
             />
           </div>
         )}
@@ -399,6 +429,28 @@ function DrawerContent({ item, onCopyContent, onItemUpdate }: DrawerContentProps
           </div>
         </section>
       </div>
+
+      {/* Delete confirmation */}
+      <AlertDialog open={deleteOpen} onOpenChange={setDeleteOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Delete item?</AlertDialogTitle>
+            <AlertDialogDescription>
+              &ldquo;{item.title}&rdquo; will be permanently deleted. This action cannot be undone.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={deleting}>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleDelete}
+              disabled={deleting}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            >
+              {deleting ? 'Deleting…' : 'Delete'}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </>
   );
 }

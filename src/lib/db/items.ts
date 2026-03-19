@@ -82,6 +82,12 @@ export async function updateItem(
   });
 }
 
+export async function deleteItem(id: string, userId: string) {
+  return prisma.item.delete({
+    where: { id, userId },
+  });
+}
+
 export async function getItemsByType(userId: string, typeName: string) {
   return prisma.item.findMany({
     where: {
