@@ -16,6 +16,13 @@
 
 <!-- Keep this updated. Earliest to latest -->
 
+### 2026-03-19 — Item Delete
+
+- Added `deleteItem(id, userId)` to `src/lib/db/items.ts` — user-scoped Prisma delete
+- Added `deleteItem` server action to `src/actions/items.ts` — auth-gated, returns `{ success, error }`
+- Updated `src/components/items/ItemDrawer.tsx` — Delete button now active; opens shadcn `AlertDialog` with item title and "cannot be undone" warning; on confirm calls server action, shows success/error toast, closes drawer via `onItemDelete()`, and calls `router.refresh()`
+- Updated `src/components/items/ItemsClientWrapper.tsx` — added `handleItemDelete` callback that closes the drawer
+
 ### 2026-03-18 — Item Drawer Edit Mode
 
 - Created `src/actions/items.ts` — `updateItem` server action with Zod validation (`{ success, data, error }` pattern); auth-gated and user-scoped via DB query
